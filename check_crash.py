@@ -44,10 +44,9 @@ def RebootRig():
   uptime = int(float(commands.getstatusoutput("cat /proc/uptime")[1].split()[0]))
   m, s = divmod(uptime, 60)
   h, m = divmod(m, 60)
-  msg = quote(str(gRigName) + " Reboot uptime " + str(h) + ":" + str(m) + ":" + str(s))
+  msg = quote(str(gLocName) + " Reboot uptime " + str(h) + ":" + str(m) + ":" + str(s))
   if (telegram.telegram == 1):
     urlopen("https://api.telegram.org/"+str(telegram.telegramAPI)+"&text=" + msg).read()
-  os.system("curl -O https://raw.githubusercontent.com/Trigun87/ethos_monitor/master/check_crash.py; chdmod 777 check_crash.py")
   os.system("sudo hard-reboot")
   os.system("sudo reboot")
 
@@ -63,7 +62,7 @@ while 1:
   numRunningGpus = len(filter(lambda a: a > 0, miner_hashes))
 
 
-  if (numRunningGpus != numGpus):
+  if (numRunningGpus != numGpus or numGpus != 13):
     if (numRunningGpus == 0):
       waitForReconnect = 1
     if (waitForReconnect == 1):
@@ -74,6 +73,9 @@ while 1:
       if (disconnectCount > 12):
         RebootRig()
         break
+      else:
+        time.sleep(15)
+        continue
     else:
      disconnectCount = 0
     RebootRig()
