@@ -76,11 +76,10 @@ while 1:
       else:
         time.sleep(15)
         continue
-    else:
-     disconnectCount = 0
     RebootRig()
     break
   else:
     waitForReconnect = 0
+    disconnectCount = 0
 
   time.sleep(15)
