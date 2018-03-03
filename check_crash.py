@@ -63,7 +63,7 @@ while 1:
   numRunningGpus = len(filter(lambda a: a > 0, miner_hashes))
 
 
-  if (numRunningGpus != numGpus or numGpus != 13):
+  if (numRunningGpus != numGpus):
     if (numRunningGpus == 0):
       waitForReconnect = 1
     if (waitForReconnect == 1):
