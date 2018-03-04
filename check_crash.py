@@ -23,7 +23,7 @@ import commands
 from urllib import urlopen
 from urllib import quote
 
-import telegram
+import settings
 
 
 gDebugMode = 1
@@ -45,8 +45,8 @@ def RebootRig():
   m, s = divmod(uptime, 60)
   h, m = divmod(m, 60)
   msg = quote(str(gLocName) + " Reboot uptime " + str(h) + ":" + str(m) + ":" + str(s))
-  if (telegram.telegram == 1):
-    urlopen("https://api.telegram.org/"+str(telegram.telegramAPI)+"&text=" + msg).read()
+  if (settings.telegram == 1):
+    urlopen("https://api.telegram.org/"+str(settings.telegramAPI)+"&text=" + msg).read()
   os.system("sudo hard-reboot")
   os.system("sudo reboot")
 
@@ -61,9 +61,10 @@ while 1:
   numGpus = int(commands.getstatusoutput("cat /var/run/ethos/gpucount.file")[1])
   numRunningGpus = len(filter(lambda a: a > 0, miner_hashes))
 
+  CPU_Pct=str(round(float(os.popen('''grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage }' ''').readline()),2))
 
-  if (numRunningGpus != numGpus):
-    if (numRunningGpus == 0):
+  if (numRunningGpus != numGpus or numGpus != settings.GpuNum or CPU_Pct > 20):
+    if (numRunningGpus == 0 or CPU_Pct > 20):
       waitForReconnect = 1
     if (waitForReconnect == 1):
       # all GPUs dead. propably TCP disconnect / pool issue
@@ -83,3 +84,4 @@ while 1:
     disconnectCount = 0
 
   time.sleep(15)
+
