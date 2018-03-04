@@ -61,10 +61,8 @@ while 1:
   numGpus = int(commands.getstatusoutput("cat /var/run/ethos/gpucount.file")[1])
   numRunningGpus = len(filter(lambda a: a > 0, miner_hashes))
 
-  CPU_Pct=str(round(float(os.popen('''grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage }' ''').readline()),2))
-
-  if (numRunningGpus != numGpus or numGpus != settings.GpuNum or CPU_Pct > 20):
-    if (numRunningGpus == 0 or CPU_Pct > 20):
+  if (numRunningGpus != numGpus or numGpus != settings.GpuNum):
+    if (numRunningGpus == 0):
       waitForReconnect = 1
     if (waitForReconnect == 1):
       # all GPUs dead. propably TCP disconnect / pool issue
