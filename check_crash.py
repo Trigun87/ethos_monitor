@@ -60,8 +60,9 @@ while 1:
   miner_hashes = [ int(x) for x in miner_hashes ] # have them without comma
   numGpus = int(commands.getstatusoutput("cat /var/run/ethos/gpucount.file")[1])
   numRunningGpus = len(filter(lambda a: a > 0, miner_hashes))
+  CPULoad = float(commands.getstatusoutput(sys.path[0] + "/sysload.php")[1])
 
-  if (numRunningGpus != numGpus or numGpus != settings.GpuNum):
+  if (numRunningGpus != numGpus or numGpus != 13 or CPULoad > 3):
     if (numRunningGpus == 0):
       waitForReconnect = 1
     if (waitForReconnect == 1):
