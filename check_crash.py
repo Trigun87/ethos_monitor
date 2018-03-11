@@ -40,6 +40,8 @@ def DumpActivity(dumpStr):
   pLogFile.close()
 
 def RebootRig():
+  miner_hashes = map( float, commands.getstatusoutput("cat /var/run/ethos/miner_hashes.file")[1].split("\n")[-1].split() )
+  miner_hashes = [ int(x) for x in miner_hashes ]
   DumpActivity("Rebooting (" + str(miner_hashes) + ")")
   uptime = int(float(commands.getstatusoutput("cat /proc/uptime")[1].split()[0]))
   m, s = divmod(uptime, 60)
