@@ -32,6 +32,7 @@ gRigName = commands.getstatusoutput("cat /etc/hostname")[1]
 gLocName = commands.getstatusoutput("/opt/ethos/sbin/ethos-readconf loc")[1]
 disconnectCount = 0
 waitForReconnect = 1
+firstError = 0
 
 def DumpActivity(dumpStr):
   print dumpStr
@@ -68,24 +69,30 @@ while 1:
   CPULoad = float(commands.getstatusoutput(sys.path[0] + "/sysload.php")[1])
 
   if (numRunningGpus != numGpus or CPULoad > 3):
-    if (numRunningGpus == 0):
+    if (numRunningGpus <= 2):
       waitForReconnect = 1
     if (waitForReconnect == 1):
       # all GPUs dead. propably TCP disconnect / pool issue
       # we wait 12 times to resolve these issues. this equals to 3 minutes. most likely appears with nicehash.
       disconnectCount += 1
-      DumpActivity("Waiting for hashes back: " + str(disconnectCount))
-      if (disconnectCount > 36):
+      if (disconnectCount > 12):
+        DumpActivity("Waiting for hashes back: " + str(disconnectCount))
         RebootRig()
         break
       else:
-        time.sleep(5)
+        time.sleep(15)
         continue
-    RebootRig()
-    break
+    if (firstError == 1):
+      RebootRig()
+      break
+    else:
+      firstError = 1
+      time.sleep(15)
   else:
     waitForReconnect = 0
     disconnectCount = 0
+    firstError = 0
 
-  time.sleep(5)
+  time.sleep(15)
+
 
